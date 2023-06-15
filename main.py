@@ -14,15 +14,27 @@ db = sqlite3.connect("server.db")
 sql = db.cursor()
 
 def create_table():
+    '''Создает таблицу в БД, если она ещё не создана'''
     sql.execute("""CREATE TABLE IF NOT EXISTS clients(
-    name TEXT,
-    day TEXT,
-    time TEXT)""")
+    name TEXT)""")
     db.commit()
     print('таблица создана')
 
+def sign_up(name):
+    """ функция записи на прием"""
+    sql.execute("INSERT INTO clients (name) VALUES (?)", (name))
+    sql.execute('''SELECT * FROM clients''')
+    s = sql.fetchall()
+    print(s)
+    pass
+
+def drop_table():
+    sql.execute('DROP TABLE clients')
+    db.commit()
+    print('таблица clients дропнута')
 
 def telegram_bot(token):
+    """Функция телеграм бота"""
     bot = telebot.TeleBot(token)
 
     @bot.message_handler(commands=["start"])
@@ -52,6 +64,7 @@ def telegram_bot(token):
 
 if __name__ == '__main__':
     # get_date()
-    create_table()
-    telegram_bot(token)
-
+    # create_table()
+    # telegram_bot(token)
+    print("whisky time!")
+    sign_up('vasia')

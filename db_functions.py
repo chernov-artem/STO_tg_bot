@@ -54,7 +54,16 @@ def new_order(name, day, time):
     sql.execute(f"INSERT INTO orders (client_name, order_day, order_time) VALUES ('{name}', '{day}', '{time}')")
     db.commit()
 
+def show_client_orders(name: str):
+    """ Показывает заказы клиента"""
+    sql.execute(f"SELECT * FROM orders WHERE client_name = '{name}'")
+    res = sql.fetchall()
+    print(res)
 
+def del_client_order(name: str, day :str, time :str):
+    sql.execute(f"DELETE FROM orders WHERE client_name = '{name}' AND order_day = '{day}' AND order_time = '{time}'")
+    db.commit()
+    print(f"Заказ {name} на {day} в {time} удален")
 
 def drop_table():
     ''' Дропает все таблицы и создает их заново'''
@@ -65,15 +74,18 @@ def drop_table():
     create_table_clienst()
     create_table_orders()
 
-sign_up('masha')
-new_order('petia', 5, '12:30')
-new_order('masha', 1, '15:30')
-new_order('vasia', 2, '10:00')
-new_order('petia', 7, '14:00')
-new_order('алколеша', 4, '17:30')
-new_order('алколеша', 4, '17:30')
-new_order('алколеша', 5, '12:35')
-print(order_time_chek(4, '17:30'))
+# sign_up('masha')
+# new_order('petia', 5, '12:30')
+# new_order('masha', 1, '15:30')
+# new_order('vasia', 2, '10:00')
+# new_order('petia', 7, '14:00')
+# new_order('алколеша', 4, '17:30')
+# new_order('алколеша', 4, '17:30')
+# new_order('алколеша', 5, '12:35')
+# print(order_time_chek(4, '17:30'))
+del_client_order('petia', '5', '12:30')
+show_client_orders('алколеша')
+
 
 # drop_table()
 

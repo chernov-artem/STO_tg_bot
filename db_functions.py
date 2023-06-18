@@ -37,6 +37,14 @@ def sign_up(name):
     s = sql.fetchall()
     print(s)
 
+def del_client(name: str):
+    ''' функция удаления клиента'''
+    sql.execute(f"DELETE FROM clients WHERE client_name = '{name}'")
+    db.commit()
+    sql.execute(f"DELETE FROM orders WHERE client_name = '{name}'")
+    db.commit()
+    print(f"Клиент {name} удален")
+
 def new_order(name, day, time):
     """ функция записи на прием. Добавляет клиента в базу клиентов, если он записывается в первый раз"""
     sql.execute(f"SELECT * FROM clients WHERE client_name = '{name}'")
@@ -77,15 +85,18 @@ def drop_table():
 # sign_up('masha')
 # new_order('petia', 5, '12:30')
 # new_order('masha', 1, '15:30')
-# new_order('vasia', 2, '10:00')
+# new_order('vasia', 1, '10:00')
+# new_order('vasia', 2, '11:00')
+# new_order('vasia', 3, '10:30')
+# new_order('vasia', 4, '12:30')
 # new_order('petia', 7, '14:00')
 # new_order('алколеша', 4, '17:30')
 # new_order('алколеша', 4, '17:30')
 # new_order('алколеша', 5, '12:35')
 # print(order_time_chek(4, '17:30'))
-del_client_order('petia', '5', '12:30')
-show_client_orders('алколеша')
-
+# del_client_order('vasia', '2', '11:00')
+# show_client_orders('petia')
+del_client('vasia')
 
 # drop_table()
 

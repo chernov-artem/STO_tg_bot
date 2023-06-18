@@ -85,10 +85,10 @@ def drop_table():
 # sign_up('masha')
 # new_order('petia', 5, '12:30')
 # new_order('masha', 1, '15:30')
-# new_order('vasia', 1, '10:00')
-# new_order('vasia', 2, '11:00')
-# new_order('vasia', 3, '10:30')
-# new_order('vasia', 4, '12:30')
+new_order('vasia', 1, '10:00')
+new_order('vasia', 2, '11:00')
+new_order('vasia', 3, '10:30')
+new_order('vasia', 4, '12:30')
 # new_order('petia', 7, '14:00')
 # new_order('алколеша', 4, '17:30')
 # new_order('алколеша', 4, '17:30')
@@ -96,7 +96,13 @@ def drop_table():
 # print(order_time_chek(4, '17:30'))
 # del_client_order('vasia', '2', '11:00')
 # show_client_orders('petia')
-del_client('vasia')
+# del_client('vasia')
 
 # drop_table()
 
+# добавить 2 разных мастеров
+# добавить парк машин
+# добавить возможность добавить/удалить машину клиента
+# добавить сумму заказа
+# добавить отчисления мастеру за вычетом налогов
+# добавить таблицу мастеров

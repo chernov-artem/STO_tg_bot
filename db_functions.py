@@ -7,7 +7,8 @@ def create_table_clients():
     '''Создает таблицу в БД, если она ещё не создана'''
     sql.execute("""CREATE TABLE IF NOT EXISTS clients(
     id INTEGER primary key,
-    client_name TEXT)""")
+    client_name TEXT,
+    cost_sum INTEGER)""")
     db.commit()
     print('таблица создана')
 
@@ -64,6 +65,7 @@ def new_order(name, day, time, car, cost):
     sql.execute(f"INSERT INTO orders (client_name, order_day, order_time, car, cost)"
                 f" VALUES ('{name}', '{day}', '{time}', '{car}', '{cost}')")
     db.commit()
+    refresh(name)
 
 def show_client_orders(name: str):
     """ Показывает заказы клиента"""
@@ -85,15 +87,17 @@ def drop_table():
     create_table_clients()
     create_table_orders()
 
-def refresh():
+def refresh(name: str):
     """ функция обновляет данные в таблицах"""
-    sql.execute("SELECT cost FROM orders WHERE client_name = 'vasia'")
+    sql.execute(f"SELECT cost FROM orders WHERE client_name = '{name}'")
     res = sql.fetchall()
     # считаем сумму за все заказы
     cost_sum = 0
     for i in res:
-        cost_sum+= i[0]
-    print(res, type(res), cost_sum)
+        cost_sum += i[0]
+    print(name, cost_sum)
+    sql.execute(f"UPDATE clients SET cost_sum = {cost_sum} WHERE client_name = '{name}'")
+    db.commit()
 
 
 # sign_up('masha')
@@ -105,14 +109,17 @@ def refresh():
 # new_order('vasia', 4, '12:30', 'vaz 2106', 2100)
 # new_order('petia', 7, '14:00', 'sub', 14000)
 # new_order('алколеша', 4, '17:30', 'volga', 5000)
-# new_order('алколеша', 4, '17:30', 'UAZ', 12350)
-# new_order('алколеша', 5, '12:35', 'UAZ', 21500)
+# new_order('алколеша', 5, '17:30', 'UAZ', 12350)
+# new_order('алколеша', 6, '12:35', 'UAZ', 21500)
 # print(order_time_chek(4, '17:30'))
 # del_client_order('vasia', '2', '11:00')
 # show_client_orders('petia')
 # del_client('vasia')
 
-refresh()
+# refresh('алколеша')
+
+
+
 
 # drop_table()
 

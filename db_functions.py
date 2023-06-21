@@ -3,25 +3,27 @@ import sqlite3
 db = sqlite3.connect("server.db")
 sql = db.cursor()
 
-def create_table_clients():
-    '''Создает таблицу в БД, если она ещё не создана'''
+def create_tables():
+    '''Создает все таблицы в БД, если оиа ещё не созданы'''
     sql.execute("""CREATE TABLE IF NOT EXISTS clients(
     id INTEGER primary key,
     client_name TEXT,
     cost_sum INTEGER)""")
-    db.commit()
-    print('таблица создана')
-
-def create_table_orders():
-    '''Создает таблицу в БД, если она ещё не создана'''
     sql.execute("""CREATE TABLE IF NOT EXISTS orders(
+        client_name TEXT,
+        order_day TEXT,
+        order_time TEXT,
+        car TEXT,
+        cost INTEGER)""")
+    sql.execute("""CREATE TABLE IF NOT EXISTS cars(
     client_name TEXT,
-    order_day TEXT,
-    order_time TEXT,
-    car TEXT,
-    cost INTEGER)""")
+    car_label TEXT,
+    car_model TEXT,
+    car_year INTEGER NOT NULL,
+    car_engine TEXT)""")
     db.commit()
-    print('таблица orders создана')
+    print('таблицы созданы')
+
 
 def order_time_chek(day: str, time: str):
     '''Проверяет занятое время. Если врямя занято, возвращает True'''
@@ -31,7 +33,7 @@ def order_time_chek(day: str, time: str):
         return True
     else:
         return False
-def sign_up(name):
+def add_client(name):
     """ функция добавления нового клиента"""
     print(type(name), name)
     sql.execute(f"INSERT INTO clients (client_name) VALUES ('{name}')")
@@ -47,6 +49,25 @@ def del_client(name: str):
     sql.execute(f"DELETE FROM orders WHERE client_name = '{name}'")
     db.commit()
     print(f"Клиент {name} удален")
+
+def add_car(name: str, car_label: str, car_model: str, car_year: int, car_engine: str):
+    sql.execute(f"""INSERT INTO cars (client_name, car_label, car_model, car_year, car_engine) VALUES ('{name}', '{car_label}', '{car_model}', {car_year}, '{car_engine}')""")
+    db.commit()
+    print(f"Для клиента {name} добавлен автомобиль {car_label}+ ' ' + {car_model} + ' ' + {car_year} + ' года c двигателем + ' {car_engine} ")
+
+def chek_car(name: str, car: int):
+    """функция проверяет наличие машины в таблице cars
+    возвращает информацию о машине выбранного номера машины
+    т.е. если car = 1 возврощает машину1 и т.д.
+    если машин нет, возвращет unknow """
+    sql.execute(f"SELECT * FROM cars WHERE client_name = '{name}'")
+    res = sql.fetchall()
+    print('res = ', res)
+    print(res[0])
+    if res == []:
+        return "unknow"
+    else:
+        return res[car][1] + " " + res[car][2] + " " + str(res[car][3]) + " " + res[car][4]
 
 def new_order(name, day, time, car, cost):
     """ функция записи на прием. Добавляет клиента в базу клиентов, если он записывается в первый раз"""
@@ -82,10 +103,10 @@ def drop_table():
     ''' Дропает все таблицы и создает их заново'''
     sql.execute('DROP TABLE clients')
     sql.execute('DROP TABLE orders')
+    sql.execute('DROP TABLE cars')
     db.commit()
-    print('таблица clients и orders дропнуты')
-    create_table_clients()
-    create_table_orders()
+    print('таблица clients, orders и car дропнуты')
+    create_tables()
 
 def refresh(name: str):
     """ функция обновляет данные в таблицах"""
@@ -100,9 +121,10 @@ def refresh(name: str):
     db.commit()
 
 
-# sign_up('masha')
+# add_client('masha')
+# add_car('masha', 'peugeot', '207', 2010, '1,6')
 # new_order('petia', 5, '12:30', 'citro', 11000)
-# new_order('masha', 1, '15:30', 'peogeot 207', 7500)
+# new_order('masha', 1, '15:30', 'peugeot 207', 7500)
 # new_order('vasia', 1, '10:00', 'vaz 2106', 1600)
 # new_order('vasia', 2, '11:00', 'vaz 2106', 1200)
 # new_order('vasia', 3, '10:30', 'vaz 2106', 3150)
@@ -111,6 +133,8 @@ def refresh(name: str):
 # new_order('алколеша', 4, '17:30', 'volga', 5000)
 # new_order('алколеша', 5, '17:30', 'UAZ', 12350)
 # new_order('алколеша', 6, '12:35', 'UAZ', 21500)
+print(chek_car('masha', 0))
+
 # print(order_time_chek(4, '17:30'))
 # del_client_order('vasia', '2', '11:00')
 # show_client_orders('petia')

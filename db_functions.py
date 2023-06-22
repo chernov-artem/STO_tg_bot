@@ -64,10 +64,12 @@ def chek_car(name: str, car: int):
     res = sql.fetchall()
     print('res = ', res)
     print(res[0])
-    if res == []:
+    if car in range(20) and res == []:
         return "unknow"
-    else:
+    elif car in range(20):
         return res[car][1] + " " + res[car][2] + " " + str(res[car][3]) + " " + res[car][4]
+    else:
+        return False
 
 def new_order(name, day, time, car, cost):
     """ функция записи на прием. Добавляет клиента в базу клиентов, если он записывается в первый раз"""
@@ -120,9 +122,8 @@ def refresh(name: str):
     sql.execute(f"UPDATE clients SET cost_sum = {cost_sum} WHERE client_name = '{name}'")
     db.commit()
 
-
 # add_client('masha')
-# add_car('masha', 'peugeot', '207', 2010, '1,6')
+# add_car('masha', 'sitroen', 'c1', 2013, '1,4')
 # new_order('petia', 5, '12:30', 'citro', 11000)
 # new_order('masha', 1, '15:30', 'peugeot 207', 7500)
 # new_order('vasia', 1, '10:00', 'vaz 2106', 1600)
@@ -133,7 +134,7 @@ def refresh(name: str):
 # new_order('алколеша', 4, '17:30', 'volga', 5000)
 # new_order('алколеша', 5, '17:30', 'UAZ', 12350)
 # new_order('алколеша', 6, '12:35', 'UAZ', 21500)
-print(chek_car('masha', 0))
+print(chek_car('masha', ''))
 
 # print(order_time_chek(4, '17:30'))
 # del_client_order('vasia', '2', '11:00')
@@ -141,7 +142,6 @@ print(chek_car('masha', 0))
 # del_client('vasia')
 
 # refresh('алколеша')
-
 
 
 

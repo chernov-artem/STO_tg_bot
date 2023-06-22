@@ -106,7 +106,15 @@ def chek_car(name: str, car_label: str, car_model: str, car_year: int, car_engin
         return True
 
 def add_master(master_name: str, master_procent: int, master_salary: int, master_work_days: str):
-    pass
+    """ Добавляет нового мастера в базу данных (если такого ещё нет)"""
+    if not master_chek(master_name, master_procent, master_salary, master_work_days):
+        sql.execute(
+            f"""INSERT INTO masters (master_name, master_procent, master_salary, master_work_days)
+            VALUES ('{master_name}', {master_procent}, {master_salary}, '{master_work_days}')""")
+        db.commit()
+        print(f"Добавили мастера {master_name} в базу")
+    else:
+        print(f"Мастер {master_name} уже зерегистрирован в базе")
 def del_master(master_name: str, master_procent: int, master_salary: int, master_work_days: str):
     pass
 def master_chek(master_name: str, master_procent: int, master_salary: int, master_work_days: str) -> bool:
@@ -211,7 +219,11 @@ def refresh(name: str):
 # show_client_orders('petia')
 # del_client('vasia')
 
-# add_car_name_to_order('masha', 0)
+add_master('Вова', 40, 0, '[1, 2, 5, 6, 9, 10, 13, 14, 17, 18, 21, 22, 25, 26, 29, 30]')
+add_master('алколеша', 40, 0, '[3, 4, 7, 8, 11, 12, 15, 16, 19, 20, 23, 24, 27, 28, 31]')
+add_master('Саня', 45, 0, '[3, 4, 7, 8, 11, 12, 15, 16, 19, 20, 23, 24, 27, 28, 31]')
+# print(master_chek('масик', 35, 0, '[1, 2, 5, 6, 9, 10, 13, 14, 17, 18, 21, 22, 25, 26, 29, 30]'))
+# master_chek('масик', 35, 0, '[3, 4, 7, 8, 11, 12, 15, 16, 19, 20, 23, 24, 27, 28, 31]')
 
 # refresh('алколеша')
 # create_tables()
@@ -223,3 +235,7 @@ def refresh(name: str):
 # добавить сумму заказа
 # добавить отчисления мастеру за вычетом налогов
 # добавить таблицу мастеров
+# добавить возможность редактирования в таблице cars
+# добавить возможность редактирования в таблице clients
+# добавить возможность редактирования в таблице masters
+# добавить возможность редактирования в таблице orders

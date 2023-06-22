@@ -35,9 +35,17 @@ def order_time_chek(day: str, time: str):
         return False
 def add_client(name):
     """ функция добавления нового клиента"""
-    print(type(name), name)
-    sql.execute(f"INSERT INTO clients (client_name) VALUES ('{name}')")
-    db.commit()
+    sql.execute(f"SELECT client_name FROM clients WHERE client_name = '{name}'")
+    res = sql.fetchall()
+    print('res ==', res)
+    if res == []:
+        sql.execute(f"INSERT INTO clients (client_name) VALUES ('{name}')")
+        sql.execute(
+            f"""INSERT INTO cars (client_name, car_label, car_model, car_year, car_engine)
+                 VALUES ('{name}', 'none', 'none', 1900, 'none')""")
+        db.commit()
+    else:
+        print('Такой клиент уже зарегистрирован')
     sql.execute('''SELECT * FROM clients''')
     s = sql.fetchall()
     print(s)
@@ -45,8 +53,8 @@ def add_client(name):
 def del_client(name: str):
     ''' функция удаления клиента'''
     sql.execute(f"DELETE FROM clients WHERE client_name = '{name}'")
-    db.commit()
     sql.execute(f"DELETE FROM orders WHERE client_name = '{name}'")
+    sql.execute(f"DELETE FROM cars WHERE client_name = '{name}'")
     db.commit()
     print(f"Клиент {name} удален")
 
@@ -72,7 +80,8 @@ def chek_car(name: str, car: int):
         return False
 
 def new_order(name, day, time, car, cost):
-    """ функция записи на прием. Добавляет клиента в базу клиентов, если он записывается в первый раз"""
+    """ функция записи на прием. Добавляет клиента в базу клиентов, если он записывается в первый раз
+    для добавления заказа нужно выбрать машину из своего гаража. Если машины ещё нет, нужно добавить свою машину в гараж"""
     sql.execute(f"SELECT * FROM clients WHERE client_name = '{name}'")
     res = sql.fetchall()
     if order_time_chek(day, time):
@@ -122,7 +131,7 @@ def refresh(name: str):
     sql.execute(f"UPDATE clients SET cost_sum = {cost_sum} WHERE client_name = '{name}'")
     db.commit()
 
-# add_client('masha')
+add_client('masha33')
 # add_car('masha', 'sitroen', 'c1', 2013, '1,4') 55
 # new_order('petia', 5, '12:30', 'citro', 11000)
 # new_order('masha', 1, '15:30', 'peugeot 207', 7500)
@@ -134,7 +143,7 @@ def refresh(name: str):
 # new_order('алколеша', 4, '17:30', 'volga', 5000)
 # new_order('алколеша', 5, '17:30', 'UAZ', 12350)
 # new_order('алколеша', 6, '12:35', 'UAZ', 21500)
-print(chek_car('masha', ''))
+# print(chek_car('masha', ''))
 
 # print(order_time_chek(4, '17:30'))
 # del_client_order('vasia', '2', '11:00')

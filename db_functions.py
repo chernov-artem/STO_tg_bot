@@ -116,7 +116,12 @@ def add_master(master_name: str, master_procent: int, master_salary: int, master
     else:
         print(f"Мастер {master_name} уже зерегистрирован в базе")
 def del_master(master_name: str, master_procent: int, master_salary: int, master_work_days: str):
-    pass
+    if master_chek(master_name, master_procent, master_salary, master_work_days):
+        sql.execute(f"""DELETE FROM masters WHERE master_name = '{master_name}'""")
+        db.commit()
+        print(f"Мастер {master_name} удален из базы")
+    else:
+        print(f"Мастера {master_name} нет в базе данных")
 def master_chek(master_name: str, master_procent: int, master_salary: int, master_work_days: str) -> bool:
     """ проверяет наличия мастера в базе"""
     sql.execute(f"SELECT * FROM masters WHERE master_name = '{master_name}'")
@@ -209,9 +214,6 @@ def refresh(name: str):
 # new_order('vasia', 3, '10:30', 'vaz 2106', 3150)
 # new_order('vasia', 4, '12:30', 'vaz 2106', 2100)
 # new_order('petia', 7, '14:00', 'sub', 14000)
-# new_order('алколеша', 4, '17:30', 'volga', 5000)
-# new_order('алколеша', 5, '17:30', 'UAZ', 12350)
-# new_order('алколеша', 6, '12:35', 'UAZ', 21500)
 # print(chek_car('masha', ''))
 
 # print(order_time_chek(4, '17:30'))
@@ -219,9 +221,10 @@ def refresh(name: str):
 # show_client_orders('petia')
 # del_client('vasia')
 
-add_master('Вова', 40, 0, '[1, 2, 5, 6, 9, 10, 13, 14, 17, 18, 21, 22, 25, 26, 29, 30]')
-add_master('алколеша', 40, 0, '[3, 4, 7, 8, 11, 12, 15, 16, 19, 20, 23, 24, 27, 28, 31]')
-add_master('Саня', 45, 0, '[3, 4, 7, 8, 11, 12, 15, 16, 19, 20, 23, 24, 27, 28, 31]')
+# add_master('Масик', 35, 0, '[1, 2, 5, 6, 9, 10, 13, 14, 17, 18, 21, 22, 25, 26, 29, 30]')
+# add_master('Вова', 40, 0, '[1, 2, 5, 6, 9, 10, 13, 14, 17, 18, 21, 22, 25, 26, 29, 30]')
+# add_master('ALKOлеша', 40, 0, '[3, 4, 7, 8, 11, 12, 15, 16, 19, 20, 23, 24, 27, 28, 31]')
+# add_master('Саня', 45, 0, '[3, 4, 7, 8, 11, 12, 15, 16, 19, 20, 23, 24, 27, 28, 31]')
 # print(master_chek('масик', 35, 0, '[1, 2, 5, 6, 9, 10, 13, 14, 17, 18, 21, 22, 25, 26, 29, 30]'))
 # master_chek('масик', 35, 0, '[3, 4, 7, 8, 11, 12, 15, 16, 19, 20, 23, 24, 27, 28, 31]')
 
@@ -234,7 +237,6 @@ add_master('Саня', 45, 0, '[3, 4, 7, 8, 11, 12, 15, 16, 19, 20, 23, 24, 27, 
 
 # добавить сумму заказа
 # добавить отчисления мастеру за вычетом налогов
-# добавить таблицу мастеров
 # добавить возможность редактирования в таблице cars
 # добавить возможность редактирования в таблице clients
 # добавить возможность редактирования в таблице masters

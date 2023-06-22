@@ -21,9 +21,13 @@ def create_tables():
     car_model TEXT,
     car_year INTEGER NOT NULL,
     car_engine TEXT)""")
+    sql.execute("""CREATE TABLE IF NOT EXISTS masters(
+    master_name TEXT,
+    master_procent INTEGER,
+    master_salary INTEGER,
+    master_work_days TEXT)""")
     db.commit()
     print('таблицы созданы')
-
 
 def order_time_chek(day: str, time: str):
     '''Проверяет занятое время. Если врямя занято, возвращает True'''
@@ -33,6 +37,7 @@ def order_time_chek(day: str, time: str):
         return True
     else:
         return False
+
 def add_client(name):
     """ функция добавления нового клиента
     нельзя добавить клиента, если имя уже занято"""
@@ -48,7 +53,6 @@ def add_client(name):
     sql.execute('''SELECT * FROM clients''')
     s = sql.fetchall()
     print(s)
-
 def del_client(name: str):
     ''' функция удаления клиента'''
 
@@ -60,8 +64,6 @@ def del_client(name: str):
         print(f"Клиент {name} удален")
     else:
         print(f"Клиент {name} не зарегистрирован в базе")
-
-
 def chek_client(name: str) -> bool:
     sql.execute(f"SELECT * FROM clients WHERE client_name = '{name}'")
     res = sql.fetchall()
@@ -82,7 +84,6 @@ def add_car(name: str, car_label: str, car_model: str, car_year: int, car_engine
     else:
         print("этот автомобиль уже зарегистрирован в гараже")
         print(f"А если у клиента несколько одинаковых машин, назовите их {car_label}1, {car_label}2 и т.д.")
-
 def del_car(name: str, car_label: str, car_model: str, car_year: int, car_engine: str):
     """ функция удаляет машину, если она уже есть в гараже"""
     if chek_car(name, car_label, car_model, car_year, car_engine):
@@ -93,8 +94,6 @@ def del_car(name: str, car_label: str, car_model: str, car_year: int, car_engine
         print("Машина удалена")
     else:
         print("Такой машины нет в гараже")
-
-
 def chek_car(name: str, car_label: str, car_model: str, car_year: int, car_engine: str) -> bool:
     """ функция проверяет наличие машины в гараже"""
     sql.execute(f"SELECT * FROM cars WHERE client_name = '{name}'"
@@ -105,6 +104,23 @@ def chek_car(name: str, car_label: str, car_model: str, car_year: int, car_engin
         return False
     else:
         return True
+
+def add_master(master_name: str, master_procent: int, master_salary: int, master_work_days: str):
+    pass
+def del_master(master_name: str, master_procent: int, master_salary: int, master_work_days: str):
+    pass
+def master_chek(master_name: str, master_procent: int, master_salary: int, master_work_days: str) -> bool:
+    """ проверяет наличия мастера в базе"""
+    sql.execute(f"SELECT * FROM masters WHERE master_name = '{master_name}'")
+    res = sql.fetchall()
+
+    if not res == []:
+        return True
+    else:
+        return False
+
+
+
 def add_car_name_to_order(name: str, car: int):
     """функция проверяет наличие машины в таблице cars
     возвращает информацию о машине выбранного номера машины
@@ -157,8 +173,9 @@ def drop_table():
     sql.execute('DROP TABLE clients')
     sql.execute('DROP TABLE orders')
     sql.execute('DROP TABLE cars')
+    sql.execute('DROP TABLE masters')
     db.commit()
-    print('таблица clients, orders и car дропнуты')
+    print('таблица clients, orders, car и masters дропнуты')
     create_tables()
 
 def refresh(name: str):
@@ -195,15 +212,14 @@ def refresh(name: str):
 # del_client('vasia')
 
 # add_car_name_to_order('masha', 0)
-print(add_car_name_to_order('masha', 3))
 
 # refresh('алколеша')
-
+# create_tables()
 # drop_table()
 
 # добавить 2 разных мастеров
-# добавить парк машин
-# добавить возможность добавить/удалить машину клиента
+
+
 # добавить сумму заказа
 # добавить отчисления мастеру за вычетом налогов
 # добавить таблицу мастеров

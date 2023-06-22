@@ -34,11 +34,10 @@ def order_time_chek(day: str, time: str):
     else:
         return False
 def add_client(name):
-    """ функция добавления нового клиента"""
-    sql.execute(f"SELECT client_name FROM clients WHERE client_name = '{name}'")
-    res = sql.fetchall()
-    print('res ==', res)
-    if res == []:
+    """ функция добавления нового клиента
+    нельзя добавить клиента, если имя уже занято"""
+
+    if not chek_client(name):
         sql.execute(f"INSERT INTO clients (client_name) VALUES ('{name}')")
         sql.execute(
             f"""INSERT INTO cars (client_name, car_label, car_model, car_year, car_engine)
@@ -52,17 +51,60 @@ def add_client(name):
 
 def del_client(name: str):
     ''' функция удаления клиента'''
-    sql.execute(f"DELETE FROM clients WHERE client_name = '{name}'")
-    sql.execute(f"DELETE FROM orders WHERE client_name = '{name}'")
-    sql.execute(f"DELETE FROM cars WHERE client_name = '{name}'")
-    db.commit()
-    print(f"Клиент {name} удален")
+
+    if chek_client(name):
+        sql.execute(f"DELETE FROM clients WHERE client_name = '{name}'")
+        sql.execute(f"DELETE FROM orders WHERE client_name = '{name}'")
+        sql.execute(f"DELETE FROM cars WHERE client_name = '{name}'")
+        db.commit()
+        print(f"Клиент {name} удален")
+    else:
+        print(f"Клиент {name} не зарегистрирован в базе")
+
+
+def chek_client(name: str) -> bool:
+    sql.execute(f"SELECT * FROM clients WHERE client_name = '{name}'")
+    res = sql.fetchall()
+    if res == []:
+        return False
+    else:
+        return True
 
 def add_car(name: str, car_label: str, car_model: str, car_year: int, car_engine: str):
-    sql.execute(f"""INSERT INTO cars (client_name, car_label, car_model, car_year, car_engine) VALUES ('{name}', '{car_label}', '{car_model}', {car_year}, '{car_engine}')""")
-    db.commit()
-    print(f"Для клиента {name} добавлен автомобиль {car_label}+ ' ' + {car_model} + ' ' + {car_year} + ' года c двигателем + ' {car_engine} ")
+    """ функция добавляет машину, если её ещё нет в гараже"""
 
+    if not chek_car0(name, car_label, car_model, car_year, car_engine):
+        sql.execute(
+            f"""INSERT INTO cars (client_name, car_label, car_model, car_year, car_engine) VALUES ('{name}', '{car_label}', '{car_model}', {car_year}, '{car_engine}')""")
+        db.commit()
+        print(
+            f"Для клиента {name} добавлен автомобиль {car_label} {car_model} {car_year} года c двигателем {car_engine} ")
+    else:
+        print("этот автомобиль уже зарегистрирован в гараже")
+        print(f"А если у клиента несколько одинаковых машин, назовите их {car_label}1, {car_label}2 и т.д.")
+
+def del_car(name: str, car_label: str, car_model: str, car_year: int, car_engine: str):
+    """ функция удаляет машину, если она уже есть в гараже"""
+    if chek_car0(name, car_label, car_model, car_year, car_engine):
+        sql.execute(f"DELETE FROM cars WHERE client_name = '{name}'"
+                f" AND car_label = '{car_label}' AND car_model = '{car_model}'"
+                f"AND car_year = '{car_year}' AND car_engine = '{car_engine}'")
+        db.commit()
+        print("Машина удалена")
+    else:
+        print("Такой машины нет в гараже")
+
+
+def chek_car0(name: str, car_label: str, car_model: str, car_year: int, car_engine: str) -> bool:
+    """ функция проверяет наличи машины в гараже"""
+    sql.execute(f"SELECT * FROM cars WHERE client_name = '{name}'"
+                f" AND car_label = '{car_label}' AND car_model = '{car_model}'"
+                f"AND car_year = '{car_year}' AND car_engine = '{car_engine}'")
+    res = sql.fetchall()
+    if res == []:
+        return False
+    else:
+        return True
 def chek_car(name: str, car: int):
     """функция проверяет наличие машины в таблице cars
     возвращает информацию о машине выбранного номера машины
@@ -71,7 +113,8 @@ def chek_car(name: str, car: int):
     sql.execute(f"SELECT * FROM cars WHERE client_name = '{name}'")
     res = sql.fetchall()
     print('res = ', res)
-    print(res[0])
+    print(res[0], type(res[0]))
+
     if car in range(20) and res == []:
         return "unknow"
     elif car in range(20):
@@ -131,8 +174,11 @@ def refresh(name: str):
     sql.execute(f"UPDATE clients SET cost_sum = {cost_sum} WHERE client_name = '{name}'")
     db.commit()
 
-add_client('masha33')
-# add_car('masha', 'sitroen', 'c1', 2013, '1,4') 55
+# add_client('masha')
+# add_car('masha', 'peugeot1', '207', 2010, '1,6')
+# print(chek_car0('masha', 'peugeot2', '207', 2010, '1,6'))
+# del_car('masha', 'peugeot1', '207', 2010, '1,6')
+# add_car('masha', 'sitroen', 'c1', 2013, '1,4')
 # new_order('petia', 5, '12:30', 'citro', 11000)
 # new_order('masha', 1, '15:30', 'peugeot 207', 7500)
 # new_order('vasia', 1, '10:00', 'vaz 2106', 1600)
@@ -151,8 +197,6 @@ add_client('masha33')
 # del_client('vasia')
 
 # refresh('алколеша')
-
-
 
 # drop_table()
 

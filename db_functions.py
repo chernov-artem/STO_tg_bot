@@ -123,7 +123,7 @@ def refresh(name: str):
     db.commit()
 
 # add_client('masha')
-# add_car('masha', 'sitroen', 'c1', 2013, '1,4')
+# add_car('masha', 'sitroen', 'c1', 2013, '1,4') 55
 # new_order('petia', 5, '12:30', 'citro', 11000)
 # new_order('masha', 1, '15:30', 'peugeot 207', 7500)
 # new_order('vasia', 1, '10:00', 'vaz 2106', 1600)

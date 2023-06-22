@@ -73,7 +73,7 @@ def chek_client(name: str) -> bool:
 def add_car(name: str, car_label: str, car_model: str, car_year: int, car_engine: str):
     """ функция добавляет машину, если её ещё нет в гараже"""
 
-    if not chek_car0(name, car_label, car_model, car_year, car_engine):
+    if not chek_car(name, car_label, car_model, car_year, car_engine):
         sql.execute(
             f"""INSERT INTO cars (client_name, car_label, car_model, car_year, car_engine) VALUES ('{name}', '{car_label}', '{car_model}', {car_year}, '{car_engine}')""")
         db.commit()
@@ -85,7 +85,7 @@ def add_car(name: str, car_label: str, car_model: str, car_year: int, car_engine
 
 def del_car(name: str, car_label: str, car_model: str, car_year: int, car_engine: str):
     """ функция удаляет машину, если она уже есть в гараже"""
-    if chek_car0(name, car_label, car_model, car_year, car_engine):
+    if chek_car(name, car_label, car_model, car_year, car_engine):
         sql.execute(f"DELETE FROM cars WHERE client_name = '{name}'"
                 f" AND car_label = '{car_label}' AND car_model = '{car_model}'"
                 f"AND car_year = '{car_year}' AND car_engine = '{car_engine}'")
@@ -95,8 +95,8 @@ def del_car(name: str, car_label: str, car_model: str, car_year: int, car_engine
         print("Такой машины нет в гараже")
 
 
-def chek_car0(name: str, car_label: str, car_model: str, car_year: int, car_engine: str) -> bool:
-    """ функция проверяет наличи машины в гараже"""
+def chek_car(name: str, car_label: str, car_model: str, car_year: int, car_engine: str) -> bool:
+    """ функция проверяет наличие машины в гараже"""
     sql.execute(f"SELECT * FROM cars WHERE client_name = '{name}'"
                 f" AND car_label = '{car_label}' AND car_model = '{car_model}'"
                 f"AND car_year = '{car_year}' AND car_engine = '{car_engine}'")
@@ -105,20 +105,19 @@ def chek_car0(name: str, car_label: str, car_model: str, car_year: int, car_engi
         return False
     else:
         return True
-def chek_car(name: str, car: int):
+def add_car_name_to_order(name: str, car: int):
     """функция проверяет наличие машины в таблице cars
     возвращает информацию о машине выбранного номера машины
     т.е. если car = 1 возврощает машину1 и т.д.
     если машин нет, возвращет unknow """
     sql.execute(f"SELECT * FROM cars WHERE client_name = '{name}'")
     res = sql.fetchall()
-    print('res = ', res)
-    print(res[0], type(res[0]))
 
-    if car in range(20) and res == []:
-        return "unknow"
-    elif car in range(20):
-        return res[car][1] + " " + res[car][2] + " " + str(res[car][3]) + " " + res[car][4]
+    if car in range(len(res)):
+        if res[car][1] == 'none':
+            return "?"
+        else:
+            return res[car][1] + " " + res[car][2] + " " + str(res[car][3]) + " " + res[car][4]
     else:
         return False
 
@@ -176,9 +175,8 @@ def refresh(name: str):
 
 # add_client('masha')
 # add_car('masha', 'peugeot1', '207', 2010, '1,6')
-# print(chek_car0('masha', 'peugeot2', '207', 2010, '1,6'))
-# del_car('masha', 'peugeot1', '207', 2010, '1,6')
 # add_car('masha', 'sitroen', 'c1', 2013, '1,4')
+# del_car('masha', 'peugeot1', '207', 2010, '1,6')
 # new_order('petia', 5, '12:30', 'citro', 11000)
 # new_order('masha', 1, '15:30', 'peugeot 207', 7500)
 # new_order('vasia', 1, '10:00', 'vaz 2106', 1600)
@@ -195,6 +193,9 @@ def refresh(name: str):
 # del_client_order('vasia', '2', '11:00')
 # show_client_orders('petia')
 # del_client('vasia')
+
+# add_car_name_to_order('masha', 0)
+print(add_car_name_to_order('masha', 3))
 
 # refresh('алколеша')
 

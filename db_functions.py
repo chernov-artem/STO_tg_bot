@@ -138,14 +138,26 @@ def busy_master(master_name: str, day: int) -> bool:
     res = sql.fetchall()
     print(res)
     work_days_temp = res[0][1][1:-1]
-    print('work_days = ', work_days_temp)
-    work_days =  work_days_temp.replace(' ', '')
-    print('work_days = ', work_days)
+    work_days = work_days_temp.replace(' ', '')
     x = work_days.split(',')
-    if str(day) in work_days:
+    work_days_int = []
+    for i in x:
+        work_days_int.append(int(i))
+    if day in work_days_int:
         return True
     else:
         return False
+
+def master_free(day: int) -> list:
+    """ возвращает список работающих в данный день мастеров"""
+    sql.execute("SELECT master_name FROM masters")
+    res = sql.fetchall()
+    master_list = []
+    for i in res:
+        if busy_master(i[0],day):
+            master_list.append(i[0])
+    return master_list
+
 
 
 def add_car_name_to_order(name: str, car: int):
@@ -230,7 +242,11 @@ def refresh(name: str):
 # new_order('petia', 7, '14:00', 'sub', 14000)
 # print(chek_car('masha', ''))
 
-print(busy_master('Масик', 13))
+print(master_free(3))
+# print(busy_master('Масик', 9))
+# print(busy_master('Вова', 9))
+# print(busy_master('ALKOлеша', 9))
+# print(busy_master('Саня', 9))
 
 # print(order_time_chek(4, '17:30'))
 # del_client_order('vasia', '2', '11:00')

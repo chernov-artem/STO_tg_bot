@@ -132,6 +132,20 @@ def master_chek(master_name: str, master_procent: int, master_salary: int, maste
     else:
         return False
 
+def busy_master(master_name: str, day: int) -> bool:
+    """возвращает True если мастер сегодня работает"""
+    sql.execute(f"SELECT master_name, master_work_days FROM masters WHERE master_name = '{master_name}'")
+    res = sql.fetchall()
+    print(res)
+    work_days_temp = res[0][1][1:-1]
+    print('work_days = ', work_days_temp)
+    work_days =  work_days_temp.replace(' ', '')
+    print('work_days = ', work_days)
+    x = work_days.split(',')
+    if str(day) in work_days:
+        return True
+    else:
+        return False
 
 
 def add_car_name_to_order(name: str, car: int):
@@ -215,6 +229,8 @@ def refresh(name: str):
 # new_order('vasia', 4, '12:30', 'vaz 2106', 2100)
 # new_order('petia', 7, '14:00', 'sub', 14000)
 # print(chek_car('masha', ''))
+
+print(busy_master('Масик', 13))
 
 # print(order_time_chek(4, '17:30'))
 # del_client_order('vasia', '2', '11:00')

@@ -203,20 +203,26 @@ def add_car_name_to_order(name: str, car: int):
 def new_order(name, day, time, car, cost):
     """ функция записи на прием. Добавляет клиента в базу клиентов, если он записывается в первый раз
     для добавления заказа нужно выбрать машину из своего гаража. Если машины ещё нет, нужно добавить свою машину в гараж"""
+
+    # получаем рандомного свободного мастера
+    master = random_master(day, time)
+    if master:
+        pass
+    else:
+        print("На это время нет свободных мастеров")
+        return False
+    # проверяем наличие клиента в базе, если его нет - добавляем
     sql.execute(f"SELECT * FROM clients WHERE client_name = '{name}'")
     res = sql.fetchall()
-    if order_time_chek(day, time):
-        print("это время уже занято! выберите другое время")
-        return False
 
     if res != []:
-        print(f'Клиента {name} записали {day} дня на {time}')
+        print(f'Клиента {name} записали {day} дня на {time} Мастер {master}')
     else:
-        sql.execute(f"INSERT INTO clients (client_name) VALUES ('{name}')")
-        print(f"добавили нового клиента {name}. Записали {day} дня на {time}")
+        add_client(name)
+        print(f"добавили нового клиента {name}. Записали {day} дня на {time} Мастер {master}")
 
-    sql.execute(f"INSERT INTO orders (client_name, order_day, order_time, car, cost)"
-                f" VALUES ('{name}', '{day}', '{time}', '{car}', '{cost}')")
+    sql.execute(f"INSERT INTO orders (client_name, order_day, order_time, car, cost, master_name)"
+                f" VALUES ('{name}', '{day}', '{time}', '{car}', '{cost}', '{master}')")
     db.commit()
     refresh(name)
 
@@ -270,7 +276,7 @@ def refresh(name: str):
 
 # new_order('vasia', 2, '11:00', 'vaz 2106', 1200)
 # new_order('vasia', 3, '10:30', 'vaz 2106', 3150)
-# new_order('vasia', 4, '12:30', 'vaz 2106', 2100)
+new_order('vasia', 7, '12:30', 'vaz 2106', 2100)
 # new_order('petia', 7, '14:00', 'sub', 14000)
 # print(chek_car('masha', ''))
 
@@ -282,7 +288,7 @@ def refresh(name: str):
 # print(busy_master('Саня', 9))
 
 # random_master(5, '15:30')
-print(random_master(1, '15:30'))
+# print(random_master(1, '15:30'))
 
 # print(order_time_chek(4, '17:30'))
 # del_client_order('vasia', '2', '11:00')

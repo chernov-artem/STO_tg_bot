@@ -1,4 +1,5 @@
 import sqlite3
+from random import choice
 
 db = sqlite3.connect("server.db")
 sql = db.cursor()
@@ -11,10 +12,11 @@ def create_tables():
     cost_sum INTEGER)""")
     sql.execute("""CREATE TABLE IF NOT EXISTS orders(
         client_name TEXT,
-        order_day TEXT,
+        order_day INTEGER,
         order_time TEXT,
         car TEXT,
-        cost INTEGER)""")
+        cost INTEGER,
+        master_name TEXT)""")
     sql.execute("""CREATE TABLE IF NOT EXISTS cars(
     client_name TEXT,
     car_label TEXT,
@@ -136,7 +138,6 @@ def busy_master(master_name: str, day: int) -> bool:
     """возвращает True если мастер сегодня работает"""
     sql.execute(f"SELECT master_name, master_work_days FROM masters WHERE master_name = '{master_name}'")
     res = sql.fetchall()
-    print(res)
     work_days_temp = res[0][1][1:-1]
     work_days = work_days_temp.replace(' ', '')
     x = work_days.split(',')
@@ -157,6 +158,29 @@ def master_free(day: int) -> list:
         if busy_master(i[0],day):
             master_list.append(i[0])
     return master_list
+
+def random_master(day: int, time: str) -> str|bool:
+    """ выбирает из работающих сегодня мастеров рандомного мастера и даёт ему заказ"""
+    master_free_list = master_free(int(day))
+    print('master_free_list = ', master_free_list)
+    sql.execute(f"SELECT master_name FROM orders WHERE order_day = {day} AND order_time = '{time}'")
+    busy_masters_tmp = sql.fetchall()
+    print('busy_masters_tmp = ', busy_masters_tmp, 'day ', day, 'time ', time)
+    # преобразуем элементы списка из кортежей в строки
+    busy_masters = []
+    for i in busy_masters_tmp:
+        busy_masters.append(i[0])
+    print('бизи мастерс = ', busy_masters)
+
+    # вычитаем списки
+    res = [i for i in master_free_list if i not in busy_masters]
+    print('free_masters_list', res)
+
+    if res == []:
+        return False
+    else:
+        return choice(res)
+
 
 
 
@@ -230,33 +254,41 @@ def refresh(name: str):
     db.commit()
 
 # add_client('masha')
-# add_car('masha', 'peugeot1', '207', 2010, '1,6')
+# add_car('masha', 'peugeot', '207', 2010, '1,6')
 # add_car('masha', 'sitroen', 'c1', 2013, '1,4')
-# del_car('masha', 'peugeot1', '207', 2010, '1,6')
 # new_order('petia', 5, '12:30', 'citro', 11000)
-# new_order('masha', 1, '15:30', 'peugeot 207', 7500)
+# new_order('masha', 5, '14:30', 'peugeot 207', 7500)
 # new_order('vasia', 1, '10:00', 'vaz 2106', 1600)
+# add_master('Масик', 35, 0, '[1, 2, 5, 6, 9, 10, 13, 14, 17, 18, 21, 22, 25, 26, 29, 30]')
+# add_master('Вова', 40, 0, '[1, 2, 5, 6, 9, 10, 13, 14, 17, 18, 21, 22, 25, 26, 29, 30]')
+# add_master('ALKOлеша', 40, 0, '[3, 4, 7, 8, 11, 12, 15, 16, 19, 20, 23, 24, 27, 28, 31]')
+# add_master('Саня', 45, 0, '[3, 4, 7, 8, 11, 12, 15, 16, 19, 20, 23, 24, 27, 28, 31]')
+
+
+
+
+
 # new_order('vasia', 2, '11:00', 'vaz 2106', 1200)
 # new_order('vasia', 3, '10:30', 'vaz 2106', 3150)
 # new_order('vasia', 4, '12:30', 'vaz 2106', 2100)
 # new_order('petia', 7, '14:00', 'sub', 14000)
 # print(chek_car('masha', ''))
 
-print(master_free(3))
+# print(master_free(3))
+# print(master_free(2))
 # print(busy_master('Масик', 9))
 # print(busy_master('Вова', 9))
 # print(busy_master('ALKOлеша', 9))
 # print(busy_master('Саня', 9))
+
+# random_master(5, '15:30')
+print(random_master(1, '15:30'))
 
 # print(order_time_chek(4, '17:30'))
 # del_client_order('vasia', '2', '11:00')
 # show_client_orders('petia')
 # del_client('vasia')
 
-# add_master('Масик', 35, 0, '[1, 2, 5, 6, 9, 10, 13, 14, 17, 18, 21, 22, 25, 26, 29, 30]')
-# add_master('Вова', 40, 0, '[1, 2, 5, 6, 9, 10, 13, 14, 17, 18, 21, 22, 25, 26, 29, 30]')
-# add_master('ALKOлеша', 40, 0, '[3, 4, 7, 8, 11, 12, 15, 16, 19, 20, 23, 24, 27, 28, 31]')
-# add_master('Саня', 45, 0, '[3, 4, 7, 8, 11, 12, 15, 16, 19, 20, 23, 24, 27, 28, 31]')
 # print(master_chek('масик', 35, 0, '[1, 2, 5, 6, 9, 10, 13, 14, 17, 18, 21, 22, 25, 26, 29, 30]'))
 # master_chek('масик', 35, 0, '[3, 4, 7, 8, 11, 12, 15, 16, 19, 20, 23, 24, 27, 28, 31]')
 

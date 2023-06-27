@@ -224,7 +224,7 @@ def new_order(name, day, time, car, cost):
     sql.execute(f"INSERT INTO orders (client_name, order_day, order_time, car, cost, master_name)"
                 f" VALUES ('{name}', '{day}', '{time}', '{car}', '{cost}', '{master}')")
     db.commit()
-    refresh(name)
+    refresh(name, master)
 
 def show_client_orders(name: str):
     """ Показывает заказы клиента"""
@@ -247,7 +247,7 @@ def drop_table():
     print('таблица clients, orders, car и masters дропнуты')
     create_tables()
 
-def refresh(name: str):
+def refresh(name: str, master: str):
     """ функция обновляет данные в таблицах"""
     sql.execute(f"SELECT cost FROM orders WHERE client_name = '{name}'")
     res = sql.fetchall()
@@ -257,6 +257,17 @@ def refresh(name: str):
         cost_sum += i[0]
     print(name, cost_sum)
     sql.execute(f"UPDATE clients SET cost_sum = {cost_sum} WHERE client_name = '{name}'")
+    # считаем отчисления мастеру
+    sql.execute(f"SELECT cost FROM orders WHERE master_name = '{master}'")
+    res_master = sql.fetchall()
+    master_salary_tmp = 0
+    for i in res_master:
+        master_salary_tmp += i[0]
+    sql.execute(f"SELECT master_procent FROM masters WHERE master_name = '{master}'")
+    master_procent = sql.fetchall()[0][0]
+    print('master_procent ', master_procent)
+    master_salary = (master_salary_tmp * int(master_procent) / 100) * 0.87
+    sql.execute(f"UPDATE masters SET master_salary = {int(master_salary)} WHERE master_name = '{master}'")
     db.commit()
 
 # add_client('masha')
@@ -276,7 +287,7 @@ def refresh(name: str):
 
 # new_order('vasia', 2, '11:00', 'vaz 2106', 1200)
 # new_order('vasia', 3, '10:30', 'vaz 2106', 3150)
-new_order('vasia', 7, '12:30', 'vaz 2106', 2100)
+new_order('vasia', 6, '12:30', 'vaz 2106', 2100)
 # new_order('petia', 7, '14:00', 'sub', 14000)
 # print(chek_car('masha', ''))
 

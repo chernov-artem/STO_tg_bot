@@ -31,14 +31,6 @@ def create_tables():
     db.commit()
     print('таблицы созданы')
 
-def order_time_chek(day: str, time: str):
-    '''Проверяет занятое время. Если врямя занято, возвращает True'''
-    sql.execute(f"SELECT client_name FROM orders WHERE order_day = '{day}' AND order_time = '{time}'")
-    res = sql.fetchall()
-    if res != []:
-        return True
-    else:
-        return False
 
 def add_client(name):
     """ функция добавления нового клиента

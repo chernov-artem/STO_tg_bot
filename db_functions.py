@@ -7,7 +7,7 @@ sql = db.cursor()
 def create_tables():
     '''Создает все таблицы в БД, если оиа ещё не созданы'''
     sql.execute("""CREATE TABLE IF NOT EXISTS clients(
-    id INTEGER primary key,
+    id INTEGER,
     client_name TEXT,
     cost_sum INTEGER)""")
     sql.execute("""CREATE TABLE IF NOT EXISTS orders(
@@ -32,15 +32,15 @@ def create_tables():
     print('таблицы созданы')
 
 
-def add_client(name):
+def add_client(ID):
     """ функция добавления нового клиента
     нельзя добавить клиента, если имя уже занято"""
 
-    if not chek_client(name):
-        sql.execute(f"INSERT INTO clients (client_name) VALUES ('{name}')")
+    if not chek_client(ID):
+        sql.execute(f"INSERT INTO clients (id) VALUES ('{ID}')")
         sql.execute(
             f"""INSERT INTO cars (client_name, car_label, car_model, car_year, car_engine)
-                 VALUES ('{name}', 'none', 'none', 1900, 'none')""")
+                 VALUES ('none', 'none', 'none', 1900, 'none')""")
         db.commit()
     else:
         print('Такой клиент уже зарегистрирован')
@@ -58,8 +58,8 @@ def del_client(name: str):
         print(f"Клиент {name} удален")
     else:
         print(f"Клиент {name} не зарегистрирован в базе")
-def chek_client(name: str) -> bool:
-    sql.execute(f"SELECT * FROM clients WHERE client_name = '{name}'")
+def chek_client(ID: int) -> bool:
+    sql.execute(f"SELECT * FROM clients WHERE id = '{ID}'")
     res = sql.fetchall()
     if res == []:
         return False
@@ -279,7 +279,7 @@ def refresh(name: str, master: str):
 
 # new_order('vasia', 2, '11:00', 'vaz 2106', 1200)
 # new_order('vasia', 3, '10:30', 'vaz 2106', 3150)
-new_order('vasia', 6, '12:30', 'vaz 2106', 2100)
+# new_order('vasia', 6, '12:30', 'vaz 2106', 2100)
 # new_order('petia', 7, '14:00', 'sub', 14000)
 # print(chek_car('masha', ''))
 

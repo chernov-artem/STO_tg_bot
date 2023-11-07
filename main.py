@@ -66,5 +66,6 @@ if __name__ == '__main__':
     # get_date()
     # create_table()
     # telegram_bot(token)
-    print("whisky time!")
-    sign_up('vasia')
+    # print("whisky time!")
+    # sign_up('vasia')
+

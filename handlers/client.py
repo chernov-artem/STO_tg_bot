@@ -11,7 +11,7 @@ ID = None
 async def commands_start(message : types.Message):
     ID = message.from_user.id
     try:
-        await bot.send_message(message.from_user.id, 'комманд старт клиент: привет!', reply_markup=client_kb.kb_client)
+        await bot.send_message(message.from_user.id, 'комманд старт клиент: привет!!', reply_markup=client_kb.kb_client)
         await message.delete()
         print('ID пользователя', ID)
         sql.execute(f"SELECT * FROM clients WHERE ID = {ID}")

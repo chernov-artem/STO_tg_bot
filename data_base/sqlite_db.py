@@ -37,5 +37,3 @@ def sql_start():
         db.commit()
         print('таблицы созданы')
 
-
-

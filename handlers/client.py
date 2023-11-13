@@ -22,5 +22,11 @@ async def commands_start(message : types.Message):
     except:
         await message.reply("Общение с ботов в ЛС. Напишите ему @spb9719268STO_bot")
 
+async def work_time(message: types.Message):
+    ID = message.from_user.id
+
+    await bot.send_message(message.from_user.id, "Время работы с 10:00 до 20:00 ежедневно")
+
 def register_handlers_client(dp : Dispatcher):
     dp.register_message_handler(commands_start, commands=['start', 'help'])
+    dp.register_message_handler(work_time, commands="время_работы")

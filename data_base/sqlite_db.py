@@ -37,3 +37,7 @@ def sql_start():
         db.commit()
         print('таблицы созданы')
 
+async def sql_add_command(ID: int, client_name: str, order_day: str, order_time: str, car:str, telephone: str):
+    "функция добавления заказа в базу данных"
+    print('вот данные запроса:', ID, client_name, order_day, order_time, car, telephone)
+    # db.commit()

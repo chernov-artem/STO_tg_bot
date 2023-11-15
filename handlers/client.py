@@ -7,7 +7,7 @@ from keyboards import client_kb
 from data_base import sqlite_db
 from data_base.sqlite_db import db, sql
 from db_functions import *
-
+"""обработка команд для клиента"""
 
 
 # from aiogram.dispatcher.filters import Text
@@ -24,7 +24,7 @@ class FSMAdmin(StatesGroup):
     telephone = State()
 async def commands_start(message : types.Message):
     """стартовая функция
-    добавляет ID клиента в базу, если его там ещё нет"""
+    добавляет ID клиента в БД, если его там ещё нет"""
 
     ID = message.from_user.id
     try:
@@ -62,11 +62,13 @@ async def make_appointment(message: types.Message):
     await bot.send_message(message.from_user.id, "на прием хотите записаться?")
 
 async def cm_start(message : types.Message, state: FSMContext):
+    """функция начала работы с машиной состояний по кнопке 'Записаться_на_ТО' """
     ID = message.from_user.id
     await FSMAdmin.client_name.set()
     await message.reply("Введите ваше имя:")
 
 async def load_name(message: types.Message, state: FSMContext):
+    """функция добавления имени при записи на ТО"""
     ID = message.from_user.id
     async with state.proxy() as data:
         data['client_name'] = message.text
@@ -74,6 +76,8 @@ async def load_name(message: types.Message, state: FSMContext):
     await  message.reply('Введите день ')
 
 async def load_day(message: types.Message, state: FSMContext):
+    """функция добавления дня при записи на ТО
+    пока время просто добавляется текстом"""
     ID = message.from_user.id
     async with state.proxy() as data:
         data['order_day'] = message.text
@@ -81,6 +85,8 @@ async def load_day(message: types.Message, state: FSMContext):
     await  message.reply('Введите время')
 
 async def load_time(message: types.Message, state: FSMContext):
+    """функция добавления времени при записи на ТО
+    пока время просто добавляется текстом"""
     ID = message.from_user.id
     async with state.proxy() as data:
         data['order_time'] = message.text
@@ -88,6 +94,8 @@ async def load_time(message: types.Message, state: FSMContext):
     await  message.reply('Введите вашу машину')
 
 async def load_car(message: types.Message, state: FSMContext):
+    """функция добавления машины
+    пока просто текст"""
     ID = message.from_user.id
     async with state.proxy() as data:
         data['car'] = message.text
@@ -95,6 +103,8 @@ async def load_car(message: types.Message, state: FSMContext):
     await  message.reply('Введите ваш телефон')
 
 async def telephone(message: types.Message, state: FSMContext):
+    """функция добавления номера телефона
+    пока просто текст без проверок"""
     ID = message.from_user.id
     async with state.proxy() as data:
         data['telephone'] = message.text
@@ -111,6 +121,7 @@ async def telephone(message: types.Message, state: FSMContext):
         print(data[i])
 
 def register_handlers_client(dp : Dispatcher):
+    """функция регистрации хендлеров"""
     dp.register_message_handler(commands_start, commands=['start', 'help'])
     dp.register_message_handler(work_time, commands="время_работы")
     dp.register_message_handler(costs, commands="Цены")

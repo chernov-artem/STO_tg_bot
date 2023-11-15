@@ -39,5 +39,6 @@ def sql_start():
 
 async def sql_add_command(ID: int, client_name: str, order_day: str, order_time: str, car:str, telephone: str):
     "функция добавления заказа в базу данных"
+    sql.execute(f"UPDATE clients SET client_name = '{client_name}' WHERE id = {ID} ")
     print('вот данные запроса:', ID, client_name, order_day, order_time, car, telephone)
-    # db.commit()
+    db.commit()

@@ -2,6 +2,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram import types, Dispatcher
 from create_bot import dp, bot
+from aiogram.dispatcher.filters import Text
 from aiogram.types import ReplyKeyboardRemove
 from keyboards import client_kb
 from data_base import sqlite_db
@@ -65,7 +66,16 @@ async def cm_start(message : types.Message, state: FSMContext):
     """функция начала работы с машиной состояний по кнопке 'Записаться_на_ТО' """
     ID = message.from_user.id
     await FSMAdmin.client_name.set()
-    await message.reply("Введите ваше имя:")
+    await message.reply("Введите ваше имя:", reply_markup=client_kb.kb_client_cancel)
+
+async def cancel_handler(message: types.Message, state : FSMContext):
+    """функция отмены ввода данных"""
+    ID = message.from_user.id
+    current_state = await state.get_state()
+    if current_state is None:
+         return
+    await state.finish()
+    await message.reply('ok')
 
 async def load_name(message: types.Message, state: FSMContext):
     """функция добавления имени при записи на ТО"""
@@ -126,6 +136,8 @@ def register_handlers_client(dp : Dispatcher):
     dp.register_message_handler(work_time, commands="время_работы")
     dp.register_message_handler(costs, commands="Цены")
     dp.register_message_handler(cm_start, commands=["Записаться_на_ТО"], state=None)
+    dp.register_message_handler(cancel_handler, state="*", commands=['отмена'])
+    dp.register_message_handler(cancel_handler, Text(equals='отмена', ignore_case=True), state="*")
     dp.register_message_handler(load_name, state=FSMAdmin.client_name)
     dp.register_message_handler(load_day, state=FSMAdmin.order_day)
     dp.register_message_handler(load_time, state=FSMAdmin.order_time)

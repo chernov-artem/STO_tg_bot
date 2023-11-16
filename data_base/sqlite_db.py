@@ -17,6 +17,7 @@ def sql_start():
             client_name TEXT,
             cost_sum INTEGER)""")
         sql.execute("""CREATE TABLE IF NOT EXISTS orders(
+                id INTEGER,
                 client_name TEXT,
                 order_day INTEGER,
                 order_time TEXT,
@@ -41,4 +42,5 @@ async def sql_add_command(ID: int, client_name: str, order_day: str, order_time:
     "функция добавления заказа в базу данных"
     sql.execute(f"UPDATE clients SET client_name = '{client_name}' WHERE id = {ID} ")
     print('вот данные запроса:', ID, client_name, order_day, order_time, car, telephone)
+    sql.execute(f"INSERT INTO orders (id, client_name, order_day, order_time, car) VALUES ('{ID}', '{client_name}', '{int(order_day)}', '{order_time}', '{car}')")
     db.commit()

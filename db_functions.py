@@ -16,6 +16,7 @@ def create_tables():
     client_name TEXT,
     cost_sum INTEGER)""")
     sql.execute("""CREATE TABLE IF NOT EXISTS orders(
+        id INTEGER,
         client_name TEXT,
         order_day INTEGER,
         order_time TEXT,
